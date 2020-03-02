@@ -3,7 +3,7 @@ import _ from 'underscore';
 const settings = {
     small: {
         timeoutSeconds   : 60 * 10,
-        displayForSeconds: 10
+        displayForSeconds: 30
     },
     big : {
         timeoutSeconds   : 60 * 60,
