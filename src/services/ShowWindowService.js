@@ -100,7 +100,7 @@ function showWindow(toShow, seconds) {
     toShow.shown = true;
     notify('show', toShow);
     seconds = SettingsService.get(toShow.name).displayForSeconds || seconds || 10;
-    addSeconds += seconds - 1;
+    addSeconds -= seconds ;
     TimerService.setTimer(seconds, function () {
         hideWindow(toShow);
     })
