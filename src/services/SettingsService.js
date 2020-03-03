@@ -7,7 +7,7 @@ const settings = {
     },
     big : {
         timeoutSeconds   : 60 * 60,
-        displayForSeconds: 60 * 10
+        displayForSeconds: 60 * 5
     }
 };
 

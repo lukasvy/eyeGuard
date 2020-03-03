@@ -1,6 +1,6 @@
 'use strict';
 
-const {app, BrowserWindow, Tray, Menu} = require('electron');
+const {app, BrowserWindow, Tray, Menu, powerMonitor} = require('electron');
 import {AppService} from './services/AppService';
 
 let tray = null;
@@ -71,6 +71,14 @@ function createWindow() {
         win.show();
     });
     AppService.start(app, myWindow);
+
+    powerMonitor.on('unlock-screen', () => {
+        AppService.start();
+    });
+
+    powerMonitor.on('lock-screen', () => {
+        AppService.stop();
+    });
 }
 
 if (!gotTheLock) {
