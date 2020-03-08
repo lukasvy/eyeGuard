@@ -48,14 +48,14 @@ function init(parent) {
     });
     small.setIgnoreMouseEvents(true);
     small.removeMenu();
-    small.loadFile('../src/notificationWindow/small.html');
+    small.loadFile('notification-window.html');
 
     big.on('closed', (event) => {
         event.preventDefault();
     });
     big.setIgnoreMouseEvents(true);
     big.removeMenu();
-    big.loadFile('../src/notificationWindow/big.html');
+    big.loadFile('notification-window.html');
 
     notificationWindow = {
         small: {
@@ -90,6 +90,7 @@ function notify(what, window) {
  */
 function showWindow(toShow, seconds) {
     notify('beforeShow', toShow);
+    toShow.window.webContents.send('show-data', SettingsService.get(toShow.name));
     toShow.window.show();
     toShow.shown = true;
     notify('show', toShow);

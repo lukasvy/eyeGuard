@@ -73,5 +73,53 @@ module.exports = [
                                       inject  : false
                                   })
         ]
+    },
+    {
+        target: "electron-renderer",
+        entry : './src/notificationWindow/main.js',
+        output: {
+            path    : __dirname + '/dist',
+            filename: "notification-bundle.js"
+        },
+        module: {
+            rules: [
+                {
+                    test   : /\.js$/,
+                    exclude: /node_modules/,
+                    use    : "babel-loader"
+                },
+                {
+                    test: /\.vue$/,
+                    use : "vue-loader"
+                },
+                {
+                    test: /\.s?css$/,
+                    use : ["vue-style-loader", "style-loader", "css-loader", "sass-loader"]
+                },
+                {
+                    test: /\.svg$/,
+                    use : "file-loader"
+                }
+            ]
+        },
+
+        resolve: {
+            extensions: [".vue", ".js", ".scss"],
+            alias     : {
+                "@": './src'
+            }
+        },
+
+        plugins: [
+            new VueLoaderPlugin(),
+
+            new webpack.NamedModulesPlugin(),
+
+            new HtmlWebpackPlugin({
+                                      filename: './notification-window.html',
+                                      template: './src/notificationWindow/index.html',
+                                      inject  : false
+                                  })
+        ]
     }
 ];
