@@ -69,12 +69,6 @@ function init(parent) {
             name  : 'big',
         }
     };
-
-    ipcMain.on('exitclick', function(event, args){
-        if (args.type) {
-            hideWindow(notificationWindow[args.type]);
-        }
-    })
 }
 
 /**
@@ -123,7 +117,7 @@ function shouldShowWindow(toShow, secondsPassed) {
         return false;
     }
     const timeoutSeconds = SettingsService.get(toShow.name).timeoutSeconds;
-    console.log(Number(secondsPassed - addSeconds), timeoutSeconds)
+    console.log(Number(secondsPassed - addSeconds), timeoutSeconds);
     return (Number(secondsPassed - addSeconds) % Number(timeoutSeconds)) === 0;
 }
 
