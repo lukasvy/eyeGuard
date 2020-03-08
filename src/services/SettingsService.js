@@ -1,5 +1,4 @@
 import _ from 'underscore';
-const fs = require('fs');
 const Store = require('electron-store');
 const store = new Store();
 
@@ -30,6 +29,7 @@ if (!store.get('userSettings')) {
  * @returns {any}
  */
 function cloneSettings() {
+    settings = store.get('userSettings') || settings;
     return JSON.parse(JSON.stringify(settings));
 }
 
@@ -38,7 +38,6 @@ function cloneSettings() {
  * @returns {undefined|*}
  */
 function get(key) {
-    settings = store.get('userSettings') || settings;
     if (!key)
     {
         return cloneSettings();
@@ -53,6 +52,15 @@ function get(key) {
  * @return {Object}
  */
 function set(type, key, value) {
+    if (key === 'timeoutSeconds' && (value < 1 || value > 3600)) {
+        return get();
+    }
+    if (key === 'displayForSeconds' && (value < 1 || value > 3600)) {
+        return get();
+    }
+    if (key === 'timeoutSeconds' || key === 'displayForSeconds') {
+        value = Number(value);
+    }
     settings = store.get('userSettings') || settings;
     const setting = _.find(settings, (setting) => setting.name === type);
     if (setting && setting[key])

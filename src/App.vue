@@ -1,5 +1,6 @@
 <template>
     <div class="ui container">
+        <br/>
         <div class="ui text container">
             <div class="ui segments">
 
@@ -17,6 +18,9 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="w3-light-grey">
+                        <div class="w3-grey" style="height:24px;width:50%"></div>
                     </div>
                     <div class="ui form">
                         <div class="two fields">
@@ -94,7 +98,7 @@
         },
         methods: {
             onValueChange(e, key, setting) {
-                SettingsService.set(setting.name, key, e.target.value);
+                this.settings = SettingsService.set(setting.name, key, e.target.value);
                 this.valueChanged = JSON.stringify(this.defaultSettings) !==
                                     JSON.stringify(this.settings);
             },

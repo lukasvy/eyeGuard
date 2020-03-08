@@ -12,9 +12,10 @@ const gotTheLock = app.requestSingleInstanceLock();
 function createWindow() {
     let win = new BrowserWindow({
         width         : 800,
-        height        : 600,
+        height        : 700,
         show          : false,
         maximizable   : false,
+        resizable     : false,
         center        : true,
         webPreferences: {
             nodeIntegration: true
