@@ -11,16 +11,18 @@ const gotTheLock = app.requestSingleInstanceLock();
 
 function createWindow() {
     let win = new BrowserWindow({
-        width         : 300,
-        height        : 250,
+        width         : 800,
+        height        : 700,
         show          : false,
         maximizable   : false,
+        resizable     : false,
         center        : true,
         webPreferences: {
             nodeIntegration: true
         },
         icon          : __dirname + '/public/icons/chronometer256x256.ico'
     });
+
     win.removeMenu();
     myWindow = win;
     win.loadFile('index.html');
@@ -29,7 +31,7 @@ function createWindow() {
         myWindow.hide();
         AppService.start(app, myWindow);
     });
-
+    // win.openDevTools();
     myWindow.on('show', function (event) {
         AppService.stop();
     });
@@ -49,7 +51,7 @@ function createWindow() {
 
     const contextMenu = Menu.buildFromTemplate([
         {
-            label: 'About', type: 'normal', click: () => {
+            label: 'Settings', type: 'normal', click: () => {
                 AppService.stop();
                 win.show();
             }

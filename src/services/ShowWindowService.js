@@ -48,14 +48,14 @@ function init(parent) {
     });
     small.setIgnoreMouseEvents(true);
     small.removeMenu();
-    small.loadFile('../src/notificationWindow/small.html');
+    small.loadFile('notification-window.html');
 
     big.on('closed', (event) => {
         event.preventDefault();
     });
     big.setIgnoreMouseEvents(true);
     big.removeMenu();
-    big.loadFile('../src/notificationWindow/big.html');
+    big.loadFile('notification-window.html');
 
     notificationWindow = {
         small: {
@@ -69,12 +69,6 @@ function init(parent) {
             name  : 'big',
         }
     };
-
-    ipcMain.on('exitclick', function(event, args){
-        if (args.type) {
-            hideWindow(notificationWindow[args.type]);
-        }
-    })
 }
 
 /**
@@ -96,6 +90,7 @@ function notify(what, window) {
  */
 function showWindow(toShow, seconds) {
     notify('beforeShow', toShow);
+    toShow.window.webContents.send('show-data', SettingsService.get(toShow.name));
     toShow.window.show();
     toShow.shown = true;
     notify('show', toShow);
@@ -123,7 +118,7 @@ function shouldShowWindow(toShow, secondsPassed) {
         return false;
     }
     const timeoutSeconds = SettingsService.get(toShow.name).timeoutSeconds;
-    console.log(Number(secondsPassed - addSeconds), timeoutSeconds)
+    console.log(Number(secondsPassed - addSeconds), timeoutSeconds);
     return (Number(secondsPassed - addSeconds) % Number(timeoutSeconds)) === 0;
 }
 
