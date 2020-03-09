@@ -31,7 +31,7 @@ function createWindow() {
         myWindow.hide();
         AppService.start(app, myWindow);
     });
-    win.openDevTools();
+    // win.openDevTools();
     myWindow.on('show', function (event) {
         AppService.stop();
     });
