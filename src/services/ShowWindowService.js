@@ -113,7 +113,7 @@ function isWindowShown() {
  * @param secondsPassed
  */
 function shouldShowWindow(toShow, secondsPassed) {
-    if (isWindowShown())
+    if (isWindowShown() || !secondsPassed)
     {
         return false;
     }
