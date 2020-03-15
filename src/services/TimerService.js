@@ -15,6 +15,7 @@ function setTimer(seconds, call, repeat) {
             timerStart: new Date().getTime(),
             seconds   : seconds * 1000,
             repeat    : repeat,
+            call      : call,
             callBack  : () => {
                 let time = Math.floor((new Date().getTime() - t.timerStart) / 1000);
                 call(time);
@@ -42,7 +43,20 @@ function reset() {
     timers = [];
 }
 
+/**
+ * @param call
+ */
+function removeTimer(call) {
+    const index = _.findIndex(timers, (part) => part.call === call);
+    if (index > -1)
+    {
+        clearInterval(timers[index].timer);
+        timers.splice(index, 1);
+    }
+}
+
 export const TimerService = {
     setTimer,
+    removeTimer,
     reset,
 };

@@ -10,8 +10,7 @@ let notifications = {
     'hideBig'  : [],
     'hideSmall': [],
 };
-let addSeconds = 0;
-
+let timePassed = 0;
 /**
  * Init Windows
  * @param parent
@@ -21,9 +20,10 @@ function init(parent) {
     {
         return;
     }
+    const [winWidth, winHeight] = [500, 250];
     const windowOptions = {
-        width         : 400,
-        height        : 100,
+        width         : winWidth,
+        height        : winHeight,
         show          : false,
         movable       : false,
         closable      : false,
@@ -41,22 +41,18 @@ function init(parent) {
     };
 
     const small = new BrowserWindow(windowOptions);
-    const big = new BrowserWindow(windowOptions);
+    const big = small;
 
+    small.on('show', function () {
+        small.setBounds({width: winWidth, height: winHeight});
+    });
     small.on('closed', (event) => {
         event.preventDefault();
     });
     small.setIgnoreMouseEvents(true);
     small.removeMenu();
     small.loadFile('notification-window.html');
-
-    big.on('closed', (event) => {
-        event.preventDefault();
-    });
-    big.setIgnoreMouseEvents(true);
-    big.removeMenu();
-    big.loadFile('notification-window.html');
-
+    // small.openDevTools();
     notificationWindow = {
         small: {
             window: small,
@@ -95,8 +91,7 @@ function showWindow(toShow, seconds) {
     toShow.shown = true;
     notify('show', toShow);
     seconds = SettingsService.get(toShow.name).displayForSeconds || seconds || 10;
-    addSeconds -= seconds ;
-    TimerService.setTimer(seconds, function () {
+    TimerService.setTimer(seconds , function () {
         hideWindow(toShow);
     })
 }
@@ -118,8 +113,8 @@ function shouldShowWindow(toShow, secondsPassed) {
         return false;
     }
     const timeoutSeconds = SettingsService.get(toShow.name).timeoutSeconds;
-    console.log(Number(secondsPassed - addSeconds), timeoutSeconds);
-    return (Number(secondsPassed - addSeconds) % Number(timeoutSeconds)) === 0;
+    console.log(Number(secondsPassed), timeoutSeconds);
+    return (Number(secondsPassed) % Number(timeoutSeconds)) === 0;
 }
 
 /**
@@ -130,10 +125,14 @@ function showNotificationWindow(secondsPassed) {
     {
         init();
     }
-    if (shouldShowWindow(notificationWindow.big, secondsPassed))
+    if (!isWindowShown())
+    {
+        timePassed++;
+    }
+    if (shouldShowWindow(notificationWindow.big, timePassed))
     {
         showWindow(notificationWindow.big);
-    } else if (shouldShowWindow(notificationWindow.small, secondsPassed))
+    } else if (shouldShowWindow(notificationWindow.small, timePassed))
     {
         showWindow(notificationWindow.small);
     }
@@ -156,9 +155,9 @@ function hideAll() {
  */
 function hideWindow(instance) {
     notify('beforeHide', instance);
+    instance.window.webContents.send('hide');
     instance.window.hide();
     instance.shown = false;
-
     notify('hide', instance);
 }
 
@@ -186,7 +185,7 @@ function on(notification, call) {
  * Resets seconds
  */
 function reset() {
-    addSeconds = 0;
+    timePassed = 0;
 }
 
 export const ShowWindowService = {

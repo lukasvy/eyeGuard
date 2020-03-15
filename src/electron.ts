@@ -9,10 +9,12 @@ let quitCalled = false;
 
 const gotTheLock = app.requestSingleInstanceLock();
 
+const [windowWidth, windowHeight] = [800, 700];
+
 function createWindow() {
     let win = new BrowserWindow({
-        width         : 800,
-        height        : 700,
+        width         : windowWidth,
+        height        : windowHeight,
         show          : false,
         maximizable   : false,
         resizable     : false,
@@ -33,6 +35,7 @@ function createWindow() {
     });
     // win.openDevTools();
     myWindow.on('show', function (event) {
+        win.setBounds({width: windowWidth, height: windowHeight});
         AppService.stop();
     });
 
