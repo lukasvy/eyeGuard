@@ -13,6 +13,15 @@
             }
         }
 
+        @keyframes fadeout {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
         .app {
             /* Disable text selection, or your app will feel like a web page */
             -webkit-user-select: none;
@@ -26,7 +35,7 @@
             background: rgba(0, 0, 0, 0);
 
             /* Smoother startup */
-            animation: fadein 0.5s;
+            animation: fadein 0.8s;
         }
     </style>
 </head>

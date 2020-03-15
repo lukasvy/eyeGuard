@@ -11,6 +11,8 @@ let notifications = {
     'hideSmall': [],
 };
 let timePassed = 0;
+const tweenTime = 400;
+
 /**
  * Init Windows
  * @param parent
@@ -30,7 +32,8 @@ function init(parent) {
         skipTaskbar   : true,
         frame         : false,
         alwaysOnTop   : true,
-        hasShadow     : true,
+        opacity       : 0,
+        hasShadow     : false,
         transparent   : true,
         titleBarStyle : 'hidden',
         modal         : true,
@@ -44,7 +47,9 @@ function init(parent) {
     const big = small;
 
     small.on('show', function () {
-        small.setBounds({width: winWidth, height: winHeight});
+        small.setBounds({width    : winWidth,
+                            height: winHeight
+                        });
     });
     small.on('closed', (event) => {
         event.preventDefault();
@@ -52,6 +57,16 @@ function init(parent) {
     small.setIgnoreMouseEvents(true);
     small.removeMenu();
     small.loadFile('notification-window.html');
+
+    small.on('show', () => {
+        setTimeout(() => {
+            small.setOpacity(1);
+        }, 200);
+    });
+    small.on('hide', () => {
+        small.setOpacity(0);
+    });
+
     // small.openDevTools();
     notificationWindow = {
         small: {
@@ -91,7 +106,7 @@ function showWindow(toShow, seconds) {
     toShow.shown = true;
     notify('show', toShow);
     seconds = SettingsService.get(toShow.name).displayForSeconds || seconds || 10;
-    TimerService.setTimer(seconds , function () {
+    TimerService.setTimer(seconds, function () {
         hideWindow(toShow);
     })
 }
