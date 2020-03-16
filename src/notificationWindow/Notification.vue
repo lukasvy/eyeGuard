@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="grid-container">
-            <div class="loader"
+            <div class="loader" :class="{'loader-active': loaderActive}"
                  :style="{width:progress+'%'}"></div>
         </div>
         <div class="grid-container">
@@ -26,7 +26,8 @@
                 icon             : 'chronometer.png',
                 progress         : 0,
                 displayForSeconds: 0,
-                shown            : false
+                shown            : false,
+                loaderActive     : false
             }
         },
         methods: {
@@ -40,9 +41,11 @@
                 this.progress = 100 / arg.displayForSeconds;
                 this.text = arg.text;
                 this.icon = arg.icon;
+                this.loaderActive = true;
                 TimerService.setTimer(1, this.increaseProgress, true);
             });
             ipcRenderer.on('hide', (event, arg) => {
+                this.loaderActive = false;
                 TimerService.removeTimer(this.increaseProgress);
                 this.progress = 0;
             });
@@ -149,9 +152,12 @@
         box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.46);
     }
 
+    .loader-active {
+        transition: width 1s;
+    }
+
     .loader {
         height: 3px;
         background: rgba(0, 0, 0, 0.3);
-        transition: width 1s;
     }
 </style>
