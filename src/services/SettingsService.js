@@ -5,7 +5,7 @@ const store = new Store();
 let defaultSettings = [
     {
         name             : 'small',
-        timeoutSeconds   : 60 * 10,
+        timeoutSeconds   : 60 * 15,
         displayForSeconds: 30,
         text             : `Time to rest your eyes`,
         icon             : 'chronometer.png'
