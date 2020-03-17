@@ -107,7 +107,6 @@
         },
         methods   : {
             onValueChange(e, key, setting) {
-                console.log(e, key, setting)
                 this.settings = SettingsService.set(setting.name, key, e.target.value);
                 this.valueChanged = JSON.stringify(this.defaultSettings) !==
                                     JSON.stringify(this.settings);
