@@ -52,10 +52,10 @@ function get(key) {
  * @return {Object}
  */
 function set(type, key, value) {
-    if (key === 'timeoutSeconds' && (value < 1 || value > 3600)) {
+    if (key === 'timeoutSeconds' && (value < 2 || value > 3600)) {
         return get();
     }
-    if (key === 'displayForSeconds' && (value < 1 || value > 3600)) {
+    if (key === 'displayForSeconds' && (value < 2 || value > 3600)) {
         return get();
     }
     if (key === 'timeoutSeconds' || key === 'displayForSeconds') {

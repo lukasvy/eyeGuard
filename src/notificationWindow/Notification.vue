@@ -12,6 +12,11 @@
                     <h2 class="text">{{text}}</h2>
                 </div>
             </div>
+            <collapse-transition :delay="300">
+                <div class="grid-container" v-if="showPause">
+                    <button class="pause-button" @click="pause">Pause for 5 minutes</button>
+                </div>
+            </collapse-transition>
         </div>
     </transition>
 </template>
@@ -19,9 +24,13 @@
 <script>
     const {ipcRenderer} = require('electron');
     import {TimerService} from '../services/TimerService';
+    import { CollapseTransition } from 'vue2-transitions';
 
     export default {
         name   : "Notification",
+        components : [
+            CollapseTransition
+        ],
         data   : function () {
             return {
                 text             : 'Time for 5 minute break',
@@ -29,18 +38,30 @@
                 progress         : 0,
                 displayForSeconds: 0,
                 shown            : false,
-                loaderActive     : false
+                loaderActive     : false,
+                showPause        : false
             }
         },
         methods: {
             increaseProgress() {
                 this.progress += 100 / this.displayForSeconds;
+            },
+            pause() {
+                if (this.sender) {
+                    this.sender.send('pause');
+                }
+                this.showPause = false;
             }
         },
         created() {
             ipcRenderer.on('show-data', (event, arg) => {
                 this.displayForSeconds = arg.displayForSeconds;
                 this.progress = 100 / arg.displayForSeconds;
+                this.sender = event.sender;
+                if (arg.showPause)
+                {
+                    TimerService.setTimer(0.5, () => this.showPause = true);
+                }
                 this.text = arg.text;
                 this.icon = arg.icon;
                 this.shown = true;
@@ -171,12 +192,34 @@
     .fade-leave-active {
         transition: opacity 1s ease-out;
     }
-    .fade-enter-active  {
+
+    .fade-enter-active {
         transition: opacity 1s ease-in;
     }
 
     .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
     {
         opacity: 0;
+    }
+
+    .pause-button {
+        border: none;
+        width: 100%;
+        height: 30px;
+        background: #dddddd;
+        cursor: pointer;
+        font-size: 0.7em;
+    }
+
+    .pause-button:hover {
+        background: #c2c2c2
+    }
+
+    .pause-button:active {
+        background: #adadad
+    }
+
+    .pause-button:focus {
+        outline: 0;
     }
 </style>

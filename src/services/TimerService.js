@@ -27,9 +27,10 @@ function setTimer(seconds, call, repeat) {
         };
         t.timer = setInterval(t.callBack, seconds * 1000);
         timers.push(t);
+        return t.timer;
     } else
     {
-        setTimeout(call, seconds * 1000)
+        return setTimeout(call, seconds * 1000)
     }
 }
 
