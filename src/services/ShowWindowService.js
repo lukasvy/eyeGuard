@@ -20,7 +20,8 @@ ipcMain.once('pause', () => {
         return;
     }
     hideWindow(getShownWindow());
-    pauseSeconds =  5;
+    // 5 minutes
+    pauseSeconds =  5 * 60;
     pauseMessageShown = true;
     if (hideWinTimeout) {
         clearInterval(hideWinTimeout);
@@ -116,10 +117,10 @@ function notify(what, window) {
  */
 function showWindow(toShow, seconds) {
     notify('beforeShow', toShow);
-
+    const settings = SettingsService.get(toShow.name);
     toShow.window.webContents.send('show-data', {
-        ...SettingsService.get(toShow.name),
-        showPause: !pauseMessageShown
+        ...settings,
+        showPause: !pauseMessageShown && settings.allowPausing
     });
     toShow.window.show();
     toShow.shown = true;

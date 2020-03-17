@@ -1,4 +1,5 @@
 import _ from 'underscore';
+
 const Store = require('electron-store');
 const store = new Store();
 
@@ -8,20 +9,23 @@ let defaultSettings = [
         timeoutSeconds   : 60 * 15,
         displayForSeconds: 30,
         text             : `Time to rest your eyes`,
-        icon             : 'chronometer.png'
+        icon             : 'chronometer.png',
+        allowPausing     : false
     },
     {
         name             : 'big',
         timeoutSeconds   : 60 * 60,
         displayForSeconds: 60 * 5,
         text             : `Time for 5 minute break`,
-        icon             : 'chronometer.png'
+        icon             : 'chronometer.png',
+        allowPausing     : true
     }
 ];
 
 let settings = JSON.parse(JSON.stringify(defaultSettings));
 
-if (!store.get('userSettings')) {
+if (!store.get('userSettings'))
+{
     store.set('userSettings', settings);
 }
 
@@ -52,19 +56,28 @@ function get(key) {
  * @return {Object}
  */
 function set(type, key, value) {
-    if (key === 'timeoutSeconds' && (value < 2 || value > 3600)) {
+    if (key === 'timeoutSeconds' && (value < 2 || value > 3600))
+    {
         return get();
     }
-    if (key === 'displayForSeconds' && (value < 2 || value > 3600)) {
+    if (key === 'displayForSeconds' && (value < 2 || value > 3600))
+    {
         return get();
     }
-    if (key === 'timeoutSeconds' || key === 'displayForSeconds') {
+    if (key === 'timeoutSeconds' || key === 'displayForSeconds')
+    {
         value = Number(value);
     }
+
     settings = store.get('userSettings') || settings;
     const setting = _.find(settings, (setting) => setting.name === type);
-    if (setting && setting[key])
+    if (setting)
     {
+        if (key === 'allowPausing')
+        {
+            value = !setting.allowPausing;
+        }
+
         setting[key] = value;
     }
     store.set('userSettings', settings);
@@ -74,15 +87,13 @@ function set(type, key, value) {
 /**
  * @returns {*}
  */
-function reset()
-{
+function reset() {
     settings = JSON.parse(JSON.stringify(defaultSettings));
     store.set('userSettings', settings);
     return get();
 }
 
-function isNotDefault()
-{
+function isNotDefault() {
     return JSON.stringify(defaultSettings) !== JSON.stringify(get());
 }
 
