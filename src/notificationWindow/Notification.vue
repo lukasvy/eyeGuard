@@ -1,17 +1,19 @@
 <template>
-    <div class="container">
-        <div class="grid-container">
-            <div class="loader" :class="{'loader-active': loaderActive}"
-                 :style="{width:progress+'%'}"></div>
-        </div>
-        <div class="grid-container">
-            <div class="items">
-                <img width="60" height="60" alt="message-icon"
-                     :src="'../public/icons/'+icon">
-                <h2 class="text">{{text}}</h2>
+    <transition name="fade">
+        <div class="container" v-if="shown">
+            <div class="grid-container">
+                <div class="loader" :class="{'loader-active': loaderActive}"
+                     :style="{width:progress+'%'}"></div>
+            </div>
+            <div class="grid-container">
+                <div class="items">
+                    <img width="60" height="60" alt="message-icon"
+                         :src="'../public/icons/'+icon">
+                    <h2 class="text">{{text}}</h2>
+                </div>
             </div>
         </div>
-    </div>
+    </transition>
 </template>
 
 <script>
@@ -41,8 +43,12 @@
                 this.progress = 100 / arg.displayForSeconds;
                 this.text = arg.text;
                 this.icon = arg.icon;
+                this.shown = true;
                 this.loaderActive = true;
                 TimerService.setTimer(1, this.increaseProgress, true);
+            });
+            ipcRenderer.on('before-hide', () => {
+                this.shown = false;
             });
             ipcRenderer.on('hide', (event, arg) => {
                 this.loaderActive = false;
@@ -52,6 +58,7 @@
         },
         destroyed() {
             ipcRenderer.removeAllListeners('show-data');
+            ipcRenderer.removeAllListeners('before-hide');
             ipcRenderer.removeAllListeners('hide');
         }
     }
@@ -159,5 +166,17 @@
     .loader {
         height: 3px;
         background: rgba(0, 0, 0, 0.3);
+    }
+
+    .fade-leave-active {
+        transition: opacity 1s ease-out;
+    }
+    .fade-enter-active  {
+        transition: opacity 1s ease-in;
+    }
+
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+    {
+        opacity: 0;
     }
 </style>

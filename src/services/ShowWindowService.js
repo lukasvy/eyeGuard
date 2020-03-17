@@ -107,8 +107,11 @@ function showWindow(toShow, seconds) {
     notify('show', toShow);
     seconds = SettingsService.get(toShow.name).displayForSeconds || seconds || 10;
     TimerService.setTimer(seconds, function () {
+        toShow.window.webContents.send('before-hide', SettingsService.get(toShow.name));
+    });
+    TimerService.setTimer(seconds + 1, function () {
         hideWindow(toShow);
-    })
+    });
 }
 
 /**
