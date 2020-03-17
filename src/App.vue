@@ -23,7 +23,7 @@
                         <div class="w3-grey" style="height:24px;width:50%"></div>
                     </div>
                     <div class="ui form">
-                        <div class="two fields">
+                        <div class="three fields">
                             <div class="field">
                                 <label>Show in </label>
                                 <div class="ui right labeled input">
@@ -50,6 +50,15 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="field">
+                                <label>Allow pausing</label>
+                                <button class="fluid ui button toggle"
+                                        :name="setting.name+'_allowPausing'"
+                                        @click="(e)=>onValueChange(e,'allowPausing', setting)"
+                                        :class="{active:setting.allowPausing}">
+                                    {{setting.allowPausing ? "On" : "Off"}}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -68,7 +77,7 @@
         </div>
         <div class="ui vertical footer segment">
             <div class="ui center aligned container">
-                <p>Code by Lukas Vyslocky (lukas.vyslocky@gmail.com)</p>
+                <p>Code by Lukas Vyslocky (<a href="mailto:lukas.vyslocky@gmail.com" title="lukas.vyslocky@gmail.com">lukas.vyslocky@gmail.com</a>) </p>
                 <p>Icons made by <a href="https://www.flaticon.com/authors/fjstudio" title="fjstudio">fjstudio</a> from
                     <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></p>
             </div>
@@ -78,14 +87,14 @@
 
 <script>
     import {SettingsService} from "./services/SettingsService";
-    import { CollapseTransition } from 'vue2-transitions';
+    import {CollapseTransition} from 'vue2-transitions';
 
     export default {
-        name   : "App",
+        name      : "App",
         components: {
             CollapseTransition
         },
-        data   : function () {
+        data      : function () {
             return {
                 settings       : [],
                 defaultSettings: [],
@@ -96,7 +105,7 @@
             this.settings = SettingsService.get();
             this.defaultSettings = SettingsService.get();
         },
-        methods: {
+        methods   : {
             onValueChange(e, key, setting) {
                 this.settings = SettingsService.set(setting.name, key, e.target.value);
                 this.valueChanged = JSON.stringify(this.defaultSettings) !==
