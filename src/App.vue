@@ -98,10 +98,6 @@
         },
         methods: {
             onValueChange(e, key, setting) {
-                // if (key === 'timeoutSeconds' &&
-                //     this.settings.displayForSeconds >= e.target.value) {
-                //     this.settings.displayForSeconds = e.target.value - 1;
-                // }
                 this.settings = SettingsService.set(setting.name, key, e.target.value);
                 this.valueChanged = JSON.stringify(this.defaultSettings) !==
                                     JSON.stringify(this.settings);

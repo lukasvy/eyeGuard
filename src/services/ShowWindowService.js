@@ -11,8 +11,22 @@ let notifications = {
     'hideSmall': [],
 };
 let timePassed = 0;
-const tweenTime = 400;
+let pauseMessageShown = false;
+let pauseSeconds = 0;
+let hideWinTimeout;
 
+ipcMain.once('pause', () => {
+    if (pauseMessageShown) {
+        return;
+    }
+    hideWindow(getShownWindow());
+    pauseSeconds =  5;
+    pauseMessageShown = true;
+    if (hideWinTimeout) {
+        clearInterval(hideWinTimeout);
+        hideWinTimeout = undefined;
+    }
+});
 /**
  * Init Windows
  * @param parent
@@ -22,7 +36,7 @@ function init(parent) {
     {
         return;
     }
-    const [winWidth, winHeight] = [500, 250];
+    const [winWidth, winHeight] = [500, 190];
     const windowOptions = {
         width         : winWidth,
         height        : winHeight,
@@ -45,16 +59,17 @@ function init(parent) {
 
     const small = new BrowserWindow(windowOptions);
     const big = small;
-
+    // small.openDevTools();
     small.on('show', function () {
-        small.setBounds({width    : winWidth,
+        small.setBounds({
+                            width : winWidth,
                             height: winHeight
                         });
     });
     small.on('closed', (event) => {
         event.preventDefault();
     });
-    small.setIgnoreMouseEvents(true);
+    small.setIgnoreMouseEvents(false);
     small.removeMenu();
     small.loadFile('notification-window.html');
 
@@ -70,9 +85,9 @@ function init(parent) {
     // small.openDevTools();
     notificationWindow = {
         small: {
-            window: small,
-            shown : false,
-            name  : 'small',
+            window    : small,
+            shown     : false,
+            name      : 'small',
         },
         big  : {
             window: big,
@@ -101,23 +116,31 @@ function notify(what, window) {
  */
 function showWindow(toShow, seconds) {
     notify('beforeShow', toShow);
-    toShow.window.webContents.send('show-data', SettingsService.get(toShow.name));
+
+    toShow.window.webContents.send('show-data', {
+        ...SettingsService.get(toShow.name),
+        showPause: !pauseMessageShown
+    });
     toShow.window.show();
     toShow.shown = true;
+
     notify('show', toShow);
+
     seconds = SettingsService.get(toShow.name).displayForSeconds || seconds || 10;
-    TimerService.setTimer(seconds, function () {
-        toShow.window.webContents.send('before-hide', SettingsService.get(toShow.name));
-    });
-    TimerService.setTimer(seconds + 1, function () {
-        hideWindow(toShow);
-    });
+    hideWinTimeout = TimerService.setTimer(seconds, () => hideWindow(toShow));
 }
 
 /**
  * Checks whenever window is shown
  */
 function isWindowShown() {
+    return !!getShownWindow();
+}
+
+/**
+ * @returns {undefined}
+ */
+function getShownWindow() {
     return _.find(notificationWindow, instance => instance.shown);
 }
 
@@ -126,7 +149,7 @@ function isWindowShown() {
  * @param secondsPassed
  */
 function shouldShowWindow(toShow, secondsPassed) {
-    if (isWindowShown() || !secondsPassed)
+    if (isWindowShown() || !secondsPassed || isPaused())
     {
         return false;
     }
@@ -143,7 +166,10 @@ function showNotificationWindow(secondsPassed) {
     {
         init();
     }
-    if (!isWindowShown())
+    if (isPaused()) {
+        processPauseTick();
+    }
+    if (!isWindowShown() && !isPaused())
     {
         timePassed++;
     }
@@ -154,6 +180,29 @@ function showNotificationWindow(secondsPassed) {
     {
         showWindow(notificationWindow.small);
     }
+}
+
+/**
+ *
+ */
+function processPauseTick()
+{
+    if (isPaused())
+    {
+        pauseSeconds--;
+        if (pauseSeconds === 0)
+        {
+            timePassed -= 1;
+        }
+    }
+}
+
+/**
+ * @returns {boolean}
+ */
+function isPaused()
+{
+    return pauseSeconds > 0;
 }
 
 /**
@@ -172,11 +221,17 @@ function hideAll() {
  * @param instance
  */
 function hideWindow(instance) {
+    if (isPaused() || getShownWindow() !== instance) {
+        return;
+    }
     notify('beforeHide', instance);
-    instance.window.webContents.send('hide');
-    instance.window.hide();
+    instance.window.webContents.send('before-hide');
     instance.shown = false;
-    notify('hide', instance);
+    TimerService.setTimer(1, () => {
+        instance.window.webContents.send('hide');
+        instance.window.hide();
+        notify('hide', instance);
+    });
 }
 
 /**
@@ -204,6 +259,8 @@ function on(notification, call) {
  */
 function reset() {
     timePassed = 0;
+    pauseMessageShown = false;
+    pauseSeconds = 0;
 }
 
 export const ShowWindowService = {
