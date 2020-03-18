@@ -10,10 +10,6 @@ module.exports = [
         target: 'electron-main',
         module: {
             rules: [{
-                test   : /\.ts$/,
-                include: /src/,
-                use    : [{loader: 'ts-loader'}]
-            }, {
                 test   : /\.js$/,
                 exclude: /node_modules/,
                 use    : "babel-loader"
