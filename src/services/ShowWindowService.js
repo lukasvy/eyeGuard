@@ -7,27 +7,32 @@ const {ipcMain} = require('electron');
 
 let notificationWindow;
 let notifications = {
-    'hideBig'  : [],
-    'hideSmall': [],
+    'hideBig'      : [],
+    'finishedBig'  : [],
+    'hideSmall'    : [],
+    'finishedSmall': [],
 };
 let timePassed = 0;
 let pauseMessageShown = false;
 let pauseSeconds = 0;
 let hideWinTimeout;
 
-ipcMain.once('pause', () => {
-    if (pauseMessageShown) {
+ipcMain.on('pause', () => {
+    if (pauseMessageShown)
+    {
         return;
     }
-    hideWindow(getShownWindow());
+    hideWindow(getShownWindow(), true);
     // 5 minutes
-    pauseSeconds =  5 * 60;
+    pauseSeconds = 5 * 60;
     pauseMessageShown = true;
-    if (hideWinTimeout) {
+    if (hideWinTimeout)
+    {
         clearInterval(hideWinTimeout);
         hideWinTimeout = undefined;
     }
 });
+
 /**
  * Init Windows
  * @param parent
@@ -86,9 +91,9 @@ function init(parent) {
     // small.openDevTools();
     notificationWindow = {
         small: {
-            window    : small,
-            shown     : false,
-            name      : 'small',
+            window: small,
+            shown : false,
+            name  : 'small',
         },
         big  : {
             window: big,
@@ -167,7 +172,8 @@ function showNotificationWindow(secondsPassed) {
     {
         init();
     }
-    if (isPaused()) {
+    if (isPaused())
+    {
         processPauseTick();
     }
     if (!isWindowShown() && !isPaused())
@@ -186,8 +192,7 @@ function showNotificationWindow(secondsPassed) {
 /**
  *
  */
-function processPauseTick()
-{
+function processPauseTick() {
     if (isPaused())
     {
         pauseSeconds--;
@@ -201,8 +206,7 @@ function processPauseTick()
 /**
  * @returns {boolean}
  */
-function isPaused()
-{
+function isPaused() {
     return pauseSeconds > 0;
 }
 
@@ -220,9 +224,11 @@ function hideAll() {
 
 /**
  * @param instance
+ * @param paused
  */
-function hideWindow(instance) {
-    if (isPaused() || getShownWindow() !== instance) {
+function hideWindow(instance, paused) {
+    if (isPaused() || getShownWindow() !== instance)
+    {
         return;
     }
     notify('beforeHide', instance);
@@ -232,6 +238,10 @@ function hideWindow(instance) {
         instance.window.webContents.send('hide');
         instance.window.hide();
         notify('hide', instance);
+        if (!paused)
+        {
+            notify('finished', instance);
+        }
     });
 }
 
