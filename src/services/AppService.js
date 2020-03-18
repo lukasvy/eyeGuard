@@ -42,7 +42,7 @@ function start(electronApp, window)
     ShowWindowService.init(window);
     TimerService.setTimer(1, ShowWindowService.showNotificationWindow, true);
     // reset service once big notification was displayed
-    ShowWindowService.on('hideBig', onHideBig);
+    ShowWindowService.on('finishedBig', onHideBig);
 }
 
 export const AppService = {
