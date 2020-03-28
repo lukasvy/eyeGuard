@@ -60,7 +60,9 @@
                 this.sender = event.sender;
                 if (arg.showPause)
                 {
-                    TimerService.setTimer(0.5, () => this.showPause = true);
+                    TimerService.setTimer(0.5, () =>
+                        this.shown ? this.showPause = true : undefined
+                    );
                 }
                 this.text = arg.text;
                 this.icon = arg.icon;
@@ -73,6 +75,7 @@
             });
             ipcRenderer.on('hide', (event, arg) => {
                 this.loaderActive = false;
+                this.showPause = false;
                 TimerService.removeTimer(this.increaseProgress);
                 this.progress = 0;
             });
