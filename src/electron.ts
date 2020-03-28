@@ -9,7 +9,7 @@ let quitCalled = false;
 
 const gotTheLock = app.requestSingleInstanceLock();
 
-const [windowWidth, windowHeight] = [800, 650];
+const [windowWidth, windowHeight] = [800, 680];
 
 function createWindow() {
     let win = new BrowserWindow({

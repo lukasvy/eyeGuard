@@ -88,7 +88,6 @@ function init(parent) {
         small.setOpacity(0);
     });
 
-    // small.openDevTools();
     notificationWindow = {
         small: {
             window: small,

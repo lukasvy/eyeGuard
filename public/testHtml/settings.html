@@ -35,12 +35,12 @@
                             <label>Show in </label>
                             <div class="ui right labeled input">
                                 <input :name="setting.name+'_timeoutSeconds'"
-                                       type="number" step="1"
+                                       type="text"
                                        v-model.number="setting.timeoutSeconds"
                                        @change="(e)=>onValueChange(e,'timeoutSeconds', setting)"
-                                       placeholder="Enter seconds" min="1" max="3600">
+                                       placeholder="Enter time" >
                                 <div class="ui basic label">
-                                    seconds
+                                    time
                                 </div>
                             </div>
                         </div>
@@ -48,12 +48,12 @@
                             <label>Hide in </label>
                             <div class="ui right labeled input">
                                 <input :name="setting.name+'_displayForSeconds'"
-                                       type="number" step="1"
+                                       type="text"
                                        v-model.number="setting.displayForSeconds"
                                        @change="(e)=>onValueChange(e,'displayForSeconds', setting)"
-                                       placeholder="Enter seconds" min="1" max="3600">
+                                       placeholder="Enter time">
                                 <div class="ui basic label">
-                                    seconds
+                                    time
                                 </div>
                             </div>
                         </div>
@@ -63,7 +63,9 @@
                         </div>
                     </div>
                 </div>
-
+            </div>
+            <div class="ui segment">
+                <small>Time to enter can be max 60 minutes and max 60 seconds. Enter it with shortcuts (eg 15m 40s). Time cannot be less than 5 seconds </small>
             </div>
             <collapse-transition :delay="300">
                 <div v-show="valueChanged">
