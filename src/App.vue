@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="ui segment">
-                    <small>Time to enter can be max 60 minutes and max 60 seconds. Enter it with shortcuts (eg 15m 40s or 60s). Time cannot be less than 5 seconds </small>
+                    <small>Time to enter can be max 60 minutes and max 60 seconds. Enter it with shortcuts (eg 15m 40s or 60s). Time cannot be less than 5 seconds.</small>
                 </div>
                 <collapse-transition :delay="300">
                     <div v-show="valueChanged">
