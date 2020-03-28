@@ -39,7 +39,7 @@ function cloneSettings() {
 
 /**
  * @param key
- * @returns {undefined|*}
+ * @return {undefined|any}
  */
 function get(key) {
     if (!key)
@@ -50,23 +50,60 @@ function get(key) {
 }
 
 /**
+ * @param key
+ * @returns {undefined|*}
+ */
+function getHumanReadable(key) {
+    let settings = {};
+    if (!key)
+    {
+        settings = cloneSettings();
+        _.each(settings, (setting, key) => {
+            settings[key].displayForSeconds = setHumanReadableTimeSettings(setting.displayForSeconds);
+            settings[key].timeoutSeconds = setHumanReadableTimeSettings(setting.timeoutSeconds);
+        });
+        return settings;
+    }
+    settings = _.find(cloneSettings(), (setting) => setting.name === key);
+    settings.timeoutSeconds = setHumanReadableTimeSettings(settings.timeoutSeconds);
+    settings.displayForSeconds = setHumanReadableTimeSettings(settings.displayForSeconds);
+    return settings;
+}
+
+/**
+ * @param value
+ * @return {String}
+ */
+function setHumanReadableTimeSettings(value) {
+    if (value < 61) {
+        return value+'s';
+    }
+    const minutes = parseInt(value / 60);
+    const seconds = value - minutes * 60;
+
+    return minutes+'m'+(seconds <= 0 ? '' : ' '+seconds+'s');
+}
+
+/**
  * @param type
  * @param key
  * @param value
  * @return {Object}
  */
 function set(type, key, value) {
-    if (key === 'timeoutSeconds' && (value < 2 || value > 3600))
-    {
-        return get();
-    }
-    if (key === 'displayForSeconds' && (value < 2 || value > 3600))
-    {
-        return get();
-    }
     if (key === 'timeoutSeconds' || key === 'displayForSeconds')
     {
-        value = Number(value);
+        try
+        {
+            value = convertFromHumanReadableTime(value);
+        } catch (e)
+        {
+            return getHumanReadable();
+        }
+        if (value < 2 || value > 3600)
+        {
+            return getHumanReadable();
+        }
     }
 
     settings = store.get('userSettings') || settings;
@@ -81,8 +118,40 @@ function set(type, key, value) {
         setting[key] = value;
     }
     store.set('userSettings', settings);
-    return get();
+    return getHumanReadable();
 }
+
+/**
+ * @param value
+ * @return {number}
+ * @throws Error
+ */
+function convertFromHumanReadableTime(value) {
+    const matches = value.match(/^\s*?(?:(\d+)\s*?(m|s))?\s*?(?:(\d+)\s*?(s))?\s*?$/i);
+    let seconds = 0;
+    if (matches && matches[1] && matches[2]) {
+        if (matches[1] && matches[2]) {
+            if (matches[2].toLowerCase() === 'm' && matches[1] < 61) {
+                seconds += parseInt(matches[1]) * 60;
+            }
+            if (matches[2].toLowerCase() === 's' && matches[1] < 61) {
+                seconds += parseInt(matches[1]);
+            }
+        }
+        if (matches[3] && matches[4]) {
+            if (matches[4].toLowerCase() === 's' && matches[3] < 61) {
+                if(matches[2].toLowerCase() !== 's') {
+                    seconds += parseInt(matches[3]);
+                }
+            }
+        }
+        if (seconds > 0) {
+            return seconds;
+        }
+    }
+    throw new Error('Could not find a valid time to convert to.');
+}
+
 
 /**
  * @returns {*}
@@ -99,6 +168,7 @@ function isNotDefault() {
 
 export const SettingsService = {
     get,
+    getHumanReadable,
     set,
     reset,
     isNotDefault,
