@@ -6,8 +6,8 @@
 
                 <div class="ui segment" v-for="setting in settings" :key="setting.name">
                     <div class="ui icon message">
-                        <img width="60" height="60" alt="message-icon"
-                             :src="'../public/icons/'+setting.icon">
+                        <img width="60" height="60" alt="message-icon" v-if="images(setting.icon)"
+                             :src="images(setting.icon).default">
                         <div class="content">
                             <div class="header">
                                 <div class="ui input">
@@ -31,7 +31,7 @@
                                            type="text"
                                            v-model.number="setting.timeoutSeconds"
                                            @change="(e)=>onValueChange(e,'timeoutSeconds', setting)"
-                                           placeholder="Enter time" >
+                                           placeholder="Enter time">
                                     <div class="ui basic label">
                                         time
                                     </div>
@@ -63,7 +63,8 @@
                     </div>
                 </div>
                 <div class="ui segment">
-                    <small>Time to enter can be max 60 minutes and max 60 seconds. Enter it with shortcuts (eg 15m 40s or 60s). Time cannot be less than 5 seconds.</small>
+                    <small>Time to enter can be max 60 minutes and max 60 seconds. Enter it with shortcuts (eg 15m 40s
+                        or 60s). Time cannot be less than 5 seconds.</small>
                 </div>
                 <collapse-transition :delay="300">
                     <div v-show="valueChanged">
@@ -91,6 +92,7 @@
 <script>
     import {SettingsService} from "./services/SettingsService";
     import {CollapseTransition} from 'vue2-transitions';
+    import {MediaService} from "./services/MediaService";
 
     export default {
         name      : "App",
@@ -99,6 +101,7 @@
         },
         data      : function () {
             return {
+                images         : MediaService.getImage,
                 settings       : [],
                 defaultSettings: [],
                 valueChanged   : SettingsService.isNotDefault(),

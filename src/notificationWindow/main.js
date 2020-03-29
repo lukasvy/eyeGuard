@@ -4,6 +4,7 @@ import App from "./Notification.vue";
 import VueElectron from 'vue-electron'
 import Transitions from 'vue2-transitions';
 
+
 Vue.use(Transitions);
 Vue.use(VueElectron);
 new Vue(
