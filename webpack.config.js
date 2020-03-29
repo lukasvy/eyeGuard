@@ -6,8 +6,12 @@ const VueLoaderPlugin = require("vue-loader/lib/plugin");
 module.exports = [
     {
         mode  : 'development',
-        entry : './src/electron.ts',
+        entry : ['@babel/polyfill', './src/electron.ts'],
         target: 'electron-main',
+        node  : {
+            __dirname : false,
+            __filename: false
+        },
         module: {
             rules: [{
                 test   : /\.js$/,
@@ -25,7 +29,11 @@ module.exports = [
     },
     {
         target: "electron-renderer",
-        entry : './src/main.js',
+        entry : ['@babel/polyfill', './src/main.js'],
+        node  : {
+            __dirname : false,
+            __filename: false
+        },
         output: {
             path    : __dirname + '/dist',
             filename: "bundle.js"
@@ -42,16 +50,24 @@ module.exports = [
                     use : "vue-loader"
                 },
                 {
-                    test: /\.s?css$/,
-                    use : ["vue-style-loader", "style-loader", "css-loader", "sass-loader"],
+                    test   : /\.s?css$/,
+                    use    : ["vue-style-loader", "style-loader", "css-loader", "sass-loader"],
                     include: [
                         path.join(__dirname, 'src'),
                         /node_modules/
                     ],
                 },
                 {
-                    test: /\.svg$/,
-                    use : "file-loader"
+                    test  : /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                    loader: "url-loader?limit=10000&mimetype=application/font-woff"
+                },
+                {
+                    test  : /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                    loader: "url-loader"
+                },
+                {
+                    test: /\.(png|jpg|gif)$/,
+                    use : "url-loader"
                 }
             ]
         },
@@ -76,10 +92,14 @@ module.exports = [
     },
     {
         target: "electron-renderer",
-        entry : './src/notificationWindow/main.js',
+        entry : ['@babel/polyfill', './src/notificationWindow/main.js'],
         output: {
             path    : __dirname + '/dist',
             filename: "notification-bundle.js"
+        },
+        node  : {
+            __dirname : false,
+            __filename: false
         },
         module: {
             rules: [
@@ -93,8 +113,8 @@ module.exports = [
                     use : "vue-loader"
                 },
                 {
-                    test: /\.s?css$/,
-                    use : ["vue-style-loader", "style-loader", "css-loader", "sass-loader"],
+                    test   : /\.s?css$/,
+                    use    : ["vue-style-loader", "style-loader", "css-loader", "sass-loader"],
                     include: [
                         path.join(__dirname, 'src'),
                         /node_modules/
@@ -103,8 +123,20 @@ module.exports = [
                 {
                     test: /\.svg$/,
                     use : "file-loader"
+                },
+                {
+                    test  : /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                    loader: "url-loader"
+                },
+                {
+                    test  : /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                    loader: "url-loader"
+                },
+                {
+                    test: /\.(png|jpg|gif)$/,
+                    use : "url-loader"
                 }
-            ]
+            ],
         },
 
         resolve: {
