@@ -159,7 +159,6 @@ function shouldShowWindow(toShow, secondsPassed) {
         return false;
     }
     const timeoutSeconds = SettingsService.get(toShow.name).timeoutSeconds;
-    console.log(Number(secondsPassed), timeoutSeconds);
     return (Number(secondsPassed) % Number(timeoutSeconds)) === 0;
 }
 

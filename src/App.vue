@@ -64,7 +64,7 @@
                 </div>
                 <div class="ui segment">
                     <small>Time to enter can be max 60 minutes and max 60 seconds. Enter it with shortcuts (eg 15m 40s
-                        or 60s). Time cannot be less than 5 seconds.</small>
+                        or 60s). Time cannot be less than 10 seconds.</small>
                 </div>
                 <collapse-transition :delay="300">
                     <div v-show="valueChanged">
@@ -80,10 +80,10 @@
         </div>
         <div class="ui vertical footer segment">
             <div class="ui center aligned container">
-                <p>Code by Lukas Vyslocky (<a href="mailto:lukas.vyslocky@gmail.com" title="lukas.vyslocky@gmail.com">lukas.vyslocky@gmail.com</a>)
-                </p>
-                <p>Icons made by <a href="https://www.flaticon.com/authors/fjstudio" title="fjstudio">fjstudio</a> from
-                    <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></p>
+                <small>Code by Lukas Vyslocky (<a href="mailto:lukas.vyslocky@gmail.com" title="lukas.vyslocky@gmail.com">lukas.vyslocky@gmail.com</a>)
+                </small>
+                <small>Icons made by <a href="https://www.flaticon.com/authors/fjstudio" title="fjstudio">fjstudio</a> from
+                    <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></small>
             </div>
         </div>
     </div>

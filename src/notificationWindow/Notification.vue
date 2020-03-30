@@ -67,6 +67,9 @@
                     TimerService.setTimer(0.5, () =>
                         this.shown ? this.showPause = true : undefined
                     );
+                    TimerService.setTimer(parseInt(this.displayForSeconds / 3), () =>
+                        this.shown ? this.showPause = false : undefined
+                    );
                 }
                 this.text = arg.text;
                 this.icon = arg.icon;

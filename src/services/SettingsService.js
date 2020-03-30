@@ -100,7 +100,7 @@ function set(type, key, value) {
         {
             return getHumanReadable();
         }
-        if (value < 2 || value > 3600)
+        if (value < 10 || value > 3600)
         {
             return getHumanReadable();
         }
