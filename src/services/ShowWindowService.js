@@ -107,12 +107,20 @@ function init(parent) {
  * Sends notification to all subscribers
  * @param what
  * @param window
+ * @param param
  */
-function notify(what, window) {
-    let key = what + (window.name.charAt(0).toUpperCase() + window.name.slice(1));
-    if (notifications[key])
+function notify(what, window, param) {
+    if (window)
     {
-        _.each(notifications[key], call => call());
+        let key = what + (window.name.charAt(0).toUpperCase() + window.name.slice(1));
+        if (notifications[key])
+        {
+            _.each(notifications[key], call => call(param));
+        }
+    }
+    if (notifications[what])
+    {
+        _.each(notifications[what], call => call(param));
     }
 }
 
@@ -161,6 +169,7 @@ function shouldShowWindow(toShow, secondsPassed) {
     }
     const timeoutSeconds = SettingsService.get(toShow.name).timeoutSeconds;
     console.log(Number(secondsPassed), timeoutSeconds);
+    notify('countdown', undefined, timeoutSeconds - Number(secondsPassed) % Number(timeoutSeconds));
     return (Number(secondsPassed) % Number(timeoutSeconds)) === 0;
 }
 

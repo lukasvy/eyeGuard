@@ -25,6 +25,8 @@ function createWindow() {
         icon          : __dirname + '/public/icons/chronometer256x256.ico'
     });
 
+    // win.webContents.openDevTools();
+
     win.removeMenu();
     myWindow = win;
     win.loadFile('index.html');
@@ -75,7 +77,8 @@ function createWindow() {
         AppService.stop();
         win.show();
     });
-    AppService.start(app, myWindow);
+
+    AppService.start(app, myWindow, tray);
 
     powerMonitor.on('unlock-screen', () => {
         AppService.start();
