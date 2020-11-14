@@ -1,11 +1,11 @@
 {
   "name": "EyeGuard",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Simple app that keeps track of computer breaks to keep your sight healthy.",
-  "main": "index.js",
+  "main": "dist/electron.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config ./webpack.config.js",
+    "build": "set NODE_ENV=production && webpack --config ./webpack.config.js && electron-builder ",
     "start": "npm run build && electron ./dist/electron.js"
   },
   "author": "Lukas Vyslocky",
@@ -42,6 +42,10 @@
   "build": {
     "appId": "com.lukasvy.eyeguard",
     "productName": "EyeGuard",
+    "portable": {
+      "unicode": false,
+      "artifactName": "EyeGuard.exe"
+    },
     "mac": {
       "icon": "./public/icons/chronometer256x256.icns",
       "category": "public.utilities"
@@ -49,8 +53,15 @@
     "win": {
       "icon": "./public/icons/chronometer256x256.png"
     },
+    "files": [
+      "./public/**/*",
+      "./dist/**/*",
+      "!**/node_modules/*",
+      "!package.json"
+    ],
     "directories": {
-      "buildResources": "public"
+      "buildResources": "public",
+      "output": "build"
     }
   },
   "lint-staged": {
