@@ -6,8 +6,8 @@
 
                 <div class="ui segment" v-for="setting in settings" :key="setting.name">
                     <div class="ui icon message">
-                        <img width="60" height="60" alt="message-icon"
-                             :src="'../public/icons/'+setting.icon">
+                        <img width="60" height="60" alt="message-icon" v-if="images(setting.icon)"
+                             :src="images(setting.icon).default">
                         <div class="content">
                             <div class="header">
                                 <div class="ui input">
@@ -28,12 +28,12 @@
                                 <label>Show in </label>
                                 <div class="ui right labeled input">
                                     <input :name="setting.name+'_timeoutSeconds'"
-                                           type="number" step="1"
+                                           type="text"
                                            v-model.number="setting.timeoutSeconds"
                                            @change="(e)=>onValueChange(e,'timeoutSeconds', setting)"
-                                           placeholder="Enter seconds" min="1" max="3600">
+                                           placeholder="Enter time">
                                     <div class="ui basic label">
-                                        seconds
+                                        time
                                     </div>
                                 </div>
                             </div>
@@ -41,12 +41,12 @@
                                 <label>Hide in </label>
                                 <div class="ui right labeled input">
                                     <input :name="setting.name+'_displayForSeconds'"
-                                           type="number" step="1"
+                                           type="text"
                                            v-model.number="setting.displayForSeconds"
                                            @change="(e)=>onValueChange(e,'displayForSeconds', setting)"
-                                           placeholder="Enter seconds" min="1" max="3600">
+                                           placeholder="Enter time">
                                     <div class="ui basic label">
-                                        seconds
+                                        time
                                     </div>
                                 </div>
                             </div>
@@ -61,7 +61,10 @@
                             </div>
                         </div>
                     </div>
-
+                </div>
+                <div class="ui segment">
+                    <small>Time to enter can be max 60 minutes and max 60 seconds. Enter it with shortcuts (eg 15m 40s
+                        or 60s). Time cannot be less than 10 seconds.</small>
                 </div>
                 <collapse-transition :delay="300">
                     <div v-show="valueChanged">
@@ -77,9 +80,10 @@
         </div>
         <div class="ui vertical footer segment">
             <div class="ui center aligned container">
-                <p>Code by Lukas Vyslocky (<a href="mailto:lukas.vyslocky@gmail.com" title="lukas.vyslocky@gmail.com">lukas.vyslocky@gmail.com</a>) </p>
-                <p>Icons made by <a href="https://www.flaticon.com/authors/fjstudio" title="fjstudio">fjstudio</a> from
-                    <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></p>
+                <small>Code by Lukas Vyslocky (<a href="mailto:lukas.vyslocky@gmail.com" title="lukas.vyslocky@gmail.com">lukas.vyslocky@gmail.com</a>)
+                </small>
+                <small>Icons made by <a href="https://www.flaticon.com/authors/fjstudio" title="fjstudio">fjstudio</a> from
+                    <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></small>
             </div>
         </div>
     </div>
@@ -88,6 +92,7 @@
 <script>
     import {SettingsService} from "./services/SettingsService";
     import {CollapseTransition} from 'vue2-transitions';
+    import {MediaService} from "./services/MediaService";
 
     export default {
         name      : "App",
@@ -96,14 +101,15 @@
         },
         data      : function () {
             return {
+                images         : MediaService.getImage,
                 settings       : [],
                 defaultSettings: [],
                 valueChanged   : SettingsService.isNotDefault(),
             }
         },
         created() {
-            this.settings = SettingsService.get();
-            this.defaultSettings = SettingsService.get();
+            this.settings = SettingsService.getHumanReadable();
+            this.defaultSettings = SettingsService.getHumanReadable();
         },
         methods   : {
             onValueChange(e, key, setting) {
@@ -112,8 +118,9 @@
                                     JSON.stringify(this.settings);
             },
             reset() {
-                this.defaultSettings = SettingsService.reset();
-                this.settings = SettingsService.get();
+                SettingsService.reset();
+                this.defaultSettings = SettingsService.getHumanReadable();
+                this.settings = SettingsService.getHumanReadable();
                 this.valueChanged = false;
             }
         }

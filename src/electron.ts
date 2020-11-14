@@ -1,7 +1,10 @@
 'use strict';
 
-const {app, BrowserWindow, Tray, Menu, powerMonitor} = require('electron');
+const {app, BrowserWindow, Tray, Menu, powerMonitor, nativeImage} = require('electron');
 import {AppService} from './services/AppService';
+
+const path = require("path");
+const process = require("process");
 
 let tray = null;
 let myWindow = null;
@@ -9,7 +12,7 @@ let quitCalled = false;
 
 const gotTheLock = app.requestSingleInstanceLock();
 
-const [windowWidth, windowHeight] = [800, 650];
+const [windowWidth, windowHeight] = [800, 680];
 
 function createWindow() {
     let win = new BrowserWindow({
@@ -22,20 +25,20 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true
         },
-        icon          : __dirname + '/public/icons/chronometer256x256.ico'
+        icon          : path.join(__dirname, '..', 'public', 'icons', 'chronometer256x256.ico')
     });
 
     // win.webContents.openDevTools();
 
     win.removeMenu();
     myWindow = win;
-    win.loadFile('index.html');
+    win.loadFile(path.join(__dirname, 'index.html'));
     myWindow.on('minimize', function (event) {
         event.preventDefault();
         myWindow.hide();
         AppService.start(app, myWindow);
     });
-    // win.openDevTools();
+
     myWindow.on('show', function (event) {
         win.setBounds({width: windowWidth, height: windowHeight});
         AppService.stop();
@@ -70,7 +73,10 @@ function createWindow() {
             }
         },
     ]);
-    tray = new Tray('./public/icons/chronometer.png');
+    // win.openDevTools();
+    tray = new Tray(nativeImage.createFromPath(
+        path.join(__dirname, '..', 'public', 'icons', 'chronometer.png'))
+    );
     tray.setToolTip('Eye Guard');
     tray.setContextMenu(contextMenu);
     tray.on('click', () => {

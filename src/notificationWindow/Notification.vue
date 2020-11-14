@@ -7,8 +7,8 @@
             </div>
             <div class="grid-container">
                 <div class="items">
-                    <img width="60" height="60" alt="message-icon"
-                         :src="'../public/icons/'+icon">
+                    <img width="60" height="60" alt="message-icon" v-if="images(icon)"
+                         :src="images(icon).default">
                     <h2 class="text">{{text}}</h2>
                 </div>
             </div>
@@ -22,16 +22,18 @@
 </template>
 
 <script>
+    import {MediaService} from "../services/MediaService";
+
     const {ipcRenderer} = require('electron');
     import {TimerService} from '../services/TimerService';
-    import { CollapseTransition } from 'vue2-transitions';
+    import {CollapseTransition} from 'vue2-transitions';
 
     export default {
-        name   : "Notification",
-        components : [
+        name      : "Notification",
+        components: [
             CollapseTransition
         ],
-        data   : function () {
+        data      : function () {
             return {
                 text             : 'Time for 5 minute break',
                 icon             : 'chronometer.png',
@@ -39,15 +41,17 @@
                 displayForSeconds: 0,
                 shown            : false,
                 loaderActive     : false,
-                showPause        : false
+                showPause        : false,
+                images           : MediaService.getImage
             }
         },
-        methods: {
+        methods   : {
             increaseProgress() {
                 this.progress += 100 / this.displayForSeconds;
             },
             pause() {
-                if (this.sender) {
+                if (this.sender)
+                {
                     this.sender.send('pause');
                 }
                 this.showPause = false;
@@ -60,7 +64,12 @@
                 this.sender = event.sender;
                 if (arg.showPause)
                 {
-                    TimerService.setTimer(0.5, () => this.showPause = true);
+                    TimerService.setTimer(0.5, () =>
+                        this.shown ? this.showPause = true : undefined
+                    );
+                    TimerService.setTimer(parseInt(this.displayForSeconds / 3), () =>
+                        this.shown ? this.showPause = false : undefined
+                    );
                 }
                 this.text = arg.text;
                 this.icon = arg.icon;
@@ -73,6 +82,7 @@
             });
             ipcRenderer.on('hide', (event, arg) => {
                 this.loaderActive = false;
+                this.showPause = false;
                 TimerService.removeTimer(this.increaseProgress);
                 this.progress = 0;
             });

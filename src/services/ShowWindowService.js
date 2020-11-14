@@ -1,7 +1,7 @@
 import {TimerService} from "./TimerService";
 import _ from 'underscore';
 import {SettingsService} from "./SettingsService";
-
+const path = require("path");
 const {BrowserWindow} = require('electron');
 const {ipcMain} = require('electron');
 
@@ -77,7 +77,7 @@ function init(parent) {
     });
     small.setIgnoreMouseEvents(false);
     small.removeMenu();
-    small.loadFile('notification-window.html');
+    small.loadFile(path.join(__dirname, 'notification-window.html'));
 
     small.on('show', () => {
         setTimeout(() => {
@@ -88,7 +88,6 @@ function init(parent) {
         small.setOpacity(0);
     });
 
-    // small.openDevTools();
     notificationWindow = {
         small: {
             window: small,
@@ -107,7 +106,6 @@ function init(parent) {
  * Sends notification to all subscribers
  * @param what
  * @param window
- * @param param
  */
 function notify(what, window, param) {
     if (window)
