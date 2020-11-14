@@ -1,5 +1,6 @@
 const nativeImage = require('electron').nativeImage;
 import {ShowWindowService} from "./ShowWindowService";
+const path = require("path");
 
 let tray;
 let timing = false;
@@ -55,7 +56,7 @@ function setNotif() {
     {
         return;
     }
-    tray.setImage(nativeImage.createFromPath('./public/icons/chronometer-notif256x256.png'));
+    tray.setImage(nativeImage.createFromPath(path.join(__dirname, '..', 'public', 'icons', 'chronometer-notif256x256.png')));
     notif = true;
 }
 
@@ -65,12 +66,12 @@ function setNormal() {
         return;
     }
     stopIntervalTimer();
-    tray.setImage(nativeImage.createFromPath('./public/icons/chronometer256x256.png'));
+    tray.setImage(nativeImage.createFromPath(path.join(__dirname, '..', 'public', 'icons', 'chronometer256x256.png')));
     notif = false;
 }
 
 export const TrayNotificationService = {
     init,
     stop : setNormal,
-    start : setNormal,
+    start: setNormal,
 };
