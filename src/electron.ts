@@ -23,7 +23,9 @@ function createWindow() {
         resizable     : false,
         center        : true,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
         },
         icon          : path.join(__dirname, '..', 'public', 'icons', 'chronometer256x256.ico')
     });
@@ -57,22 +59,26 @@ function createWindow() {
         }
     });
 
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Settings', type: 'normal', click: () => {
-                AppService.stop();
-                win.show();
-            }
-        },
-        {type: 'separator'},
-        {
-            label: 'Quit', type: 'normal', click: () => {
-                quitCalled = true;
-                AppService.stop();
-                app.quit();
-            }
-        },
-    ]);
+    function buildMenu() {
+        return Menu.buildFromTemplate([
+            {
+                label: 'Settings', type: 'normal', click: () => {
+                    AppService.stop();
+                    win.show();
+                }
+            },
+            {type: 'separator'},
+            {
+                label: 'Quit', type: 'normal', click: () => {
+                    quitCalled = true;
+                    AppService.stop();
+                    app.quit();
+                }
+            },
+        ])
+    }
+
+    const contextMenu = buildMenu();
     // win.openDevTools();
     tray = new Tray(nativeImage.createFromPath(
         path.join(__dirname, '..', 'public', 'icons', 'chronometer.png'))
