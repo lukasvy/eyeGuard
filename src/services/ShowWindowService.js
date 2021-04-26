@@ -59,7 +59,9 @@ function init(parent) {
         modal         : true,
         parent        : parent,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
         }
     };
 
