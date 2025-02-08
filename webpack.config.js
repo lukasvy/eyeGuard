@@ -51,7 +51,7 @@ module.exports = [
                 },
                 {
                     test   : /\.s?css$/,
-                    use    : ["vue-style-loader", "style-loader", "css-loader", "sass-loader"],
+                    use    : ["vue-style-loader", "vue-style-loader", "css-loader"],
                     include: [
                         path.join(__dirname, 'src'),
                         /node_modules/
@@ -114,7 +114,7 @@ module.exports = [
                 },
                 {
                     test   : /\.s?css$/,
-                    use    : ["vue-style-loader", "style-loader", "css-loader", "sass-loader"],
+                    use    : ["vue-style-loader", "css-loader"],
                     include: [
                         path.join(__dirname, 'src'),
                         /node_modules/
